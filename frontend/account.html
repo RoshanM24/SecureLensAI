@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Secure Lens AI</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c1f 0%, #1a1535 50%, #2d1b4e 100%);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #navbar-container {
+            margin-bottom: 40px;
+        }
+
+        .account-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #a78bfa;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: #b8a0d4;
+        }
+
+        /* Glass Morphism Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(167, 139, 250, 0.4);
+            box-shadow: 0 8px 32px rgba(167, 139, 250, 0.15);
+        }
+
+        /* Profile Card */
+        .profile-card {
+            text-align: center;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(167, 139, 250, 0.4);
+            font-weight: bold;
+        }
+
+        .profile-card h2 {
+            font-size: 1.8rem;
+            color: #a78bfa;
+            margin-bottom: 10px;
+        }
+
+        .profile-card .member-since {
+            color: #b8a0d4;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #86efac;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Section Headers */
+        .card h3 {
+            font-size: 1.3rem;
+            color: #a78bfa;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        /* Statistics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(167, 139, 250, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(167, 139, 250, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #b8a0d4;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            color: #a78bfa;
+            font-weight: 600;
+        }
+
+        .stat-placeholder {
+            color: #7c7c8c;
+            font-size: 0.9rem;
+        }
+
+        /* Security Settings */
+        .security-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(167, 139, 250, 0.1);
+        }
+
+        .security-item:last-child {
+            border-bottom: none;
+        }
+
+        .security-item-left {
+            flex: 1;
+        }
+
+        .security-item-label {
+            color: #d0c0e8;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .security-item-value {
+            color: #b8a0d4;
+            font-size: 0.9rem;
+        }
+
+        .password-display {
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(167, 139, 250, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.5);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(167, 139, 250, 0.15);
+            color: #a78bfa;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(167, 139, 250, 0.25);
+            border-color: rgba(167, 139, 250, 0.5);
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.8rem;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 14px 20px;
+            margin-top: 10px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(167, 139, 250, 0.2);
+            transition: .4s;
+            border-radius: 26px;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:disabled ~ .toggle-slider {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: rgba(34, 197, 94, 0.4);
+            border-color: rgba(34, 197, 94, 0.6);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Danger Zone */
+        .danger-zone {
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .danger-zone h3 {
+            color: #fca5a5;
+        }
+
+        .danger-warning {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid rgba(239, 68, 68, 0.5);
+            padding: 12px 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #fca5a5;
+            font-size: 0.9rem;
+        }
+
+        .danger-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .logout-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(167, 139, 250, 0.2);
+            text-align: center;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 150px;
+            background-color: rgba(167, 139, 250, 0.9);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -75px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .coming-soon-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(167, 139, 250, 0.2);
+            border: 1px solid rgba(167, 139, 250, 0.4);
+            color: #a78bfa;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1535 0%, #2d1b4e 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-content h3 {
+            color: #fca5a5;
+            margin-bottom: 15px;
+            border: none;
+            padding: 0;
+        }
+
+        .modal-content p {
+            color: #b8a0d4;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 6px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .danger-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <div class="account-container">
+        <div class="page-header">
+            <h1>Account Settings</h1>
+            <p>Manage your profile and security preferences</p>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="card profile-card">
+            <div class="avatar" id="userAvatar">-</div>
+            <h2 id="username">Loading...</h2>
+            <p class="member-since" id="memberSince">Member since loading...</p>
+            <span class="status-badge">Active</span>
+        </div>
+
+        <!-- Account Statistics -->
+        <div class="card">
+            <h3>Account Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg></div>
+                    <div class="stat-label">Total Analyses</div>
+                    <div class="stat-value" id="totalAnalyses">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+                    <div class="stat-label">Files Uploaded</div>
+                    <div class="stat-value" id="filesUploaded">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14" stroke="var(--bg-primary, #0f172a)" stroke-width="2" fill="none"/></svg></div>
+                    <div class="stat-label">Last Active</div>
+                    <div class="stat-value stat-placeholder" id="lastActive">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                    <div class="stat-label">Account Type</div>
+                    <div class="stat-value" id="accountType">Professional</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div class="card">
+            <h3>Security Settings</h3>
+
+            <div class="security-item">
+                <div class="security-item-left">
+                    <div class="security-item-label">Password</div>
+                    <div class="security-item-value password-display">••••••••</div>
+                </div>
+                <div class="tooltip">
+                    <button class="btn btn-primary btn-small" disabled>
+                        Change Password
+                        <span class="coming-soon-badge">Coming Soon</span>
+                    </button>
+                    <span class="tooltiptext">Feature coming soon</span>
+                </div>
+            </div>
+
+            <div class="security-item">
+                <div class="security-item-left">
+                    <div class="security-item-label">Two-Factor Authentication</div>
+                    <div class="security-item-value">Not enabled</div>
+                </div>
+                <div class="tooltip">
+                    <label class="toggle-switch">
+                        <input type="checkbox" disabled>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="tooltiptext">Coming soon</span>
+                </div>
+            </div>
+
+            <div class="security-item">
+                <div class="security-item-left">
+                    <div class="security-item-label">Current Session</div>
+                    <div class="security-item-value" id="sessionInfo">Started loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="card danger-zone">
+            <h3>Danger Zone</h3>
+            <p class="danger-warning"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13" stroke="var(--bg-primary, #0f172a)" stroke-width="2"/><line x1="12" y1="17" x2="12.01" y2="17" stroke="var(--bg-primary, #0f172a)" stroke-width="2"/></svg> These actions are permanent and cannot be undone. Please proceed with caution.</p>
+
+            <div class="danger-actions">
+                <button class="btn btn-danger" id="deleteAccountBtn">Delete Account</button>
+                <button class="btn btn-secondary" id="exportDataBtn">Export Data</button>
+            </div>
+        </div>
+
+        <!-- Logout -->
+        <div class="logout-section">
+            <button class="btn btn-primary btn-full" id="logoutBtn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <h3>Delete Account?</h3>
+            <p>This action is permanent and cannot be undone. All your data will be deleted from our servers.</p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api-client.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        let userData = null;
+        let sessionStartTime = new Date();
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            loadNavbar();
+            await checkAuth();
+            await loadUserData();
+            setupEventListeners();
+            setupSessionInfo();
+        });
+
+        // Auth check
+        async function checkAuth() {
+            if (!window.SecuLens || !window.SecuLens.api || !window.SecuLens.api.isLoggedIn()) {
+                window.location.href = '/login.html';
+                return;
+            }
+        }
+
+        // Load user data from API
+        async function loadUserData() {
+            try {
+                // Load user info
+                const userResponse = await SecuLens.api.getMe();
+                userData = userResponse;
+
+                // Update profile
+                const firstLetter = (userData.username || 'U')[0].toUpperCase();
+                document.getElementById('userAvatar').textContent = firstLetter;
+                document.getElementById('username').textContent = userData.username || 'User Account';
+
+                // Format member since date
+                if (userData.created_at) {
+                    const createdDate = new Date(userData.created_at);
+                    const formattedDate = createdDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    document.getElementById('memberSince').textContent = `Member since ${formattedDate}`;
+                }
+
+                // Load account statistics (gracefully handle if endpoint doesn't exist)
+                try {
+                    const statsResponse = await SecuLens.api.getAccountStats();
+                    const stats = statsResponse;
+
+                    if (stats.total_analyses !== undefined) {
+                        document.getElementById('totalAnalyses').textContent = stats.total_analyses;
+                    }
+                    if (stats.files_uploaded !== undefined) {
+                        document.getElementById('filesUploaded').textContent = stats.files_uploaded;
+                    }
+                    if (stats.last_active) {
+                        document.getElementById('lastActive').textContent = formatRelativeTime(stats.last_active);
+                        document.getElementById('lastActive').classList.remove('stat-placeholder');
+                    }
+                } catch (error) {
+                    // Stats endpoint might not exist yet, use defaults
+                    document.getElementById('totalAnalyses').textContent = '0';
+                    document.getElementById('filesUploaded').textContent = '0';
+                    document.getElementById('lastActive').textContent = 'Now';
+                    document.getElementById('lastActive').classList.remove('stat-placeholder');
+                }
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                document.getElementById('username').textContent = 'Error loading profile';
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Delete account
+            document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+                document.getElementById('deleteModal').classList.add('active');
+            });
+
+            document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+                document.getElementById('deleteModal').classList.remove('active');
+            });
+
+            document.getElementById('confirmDeleteBtn').addEventListener('click', deleteAccount);
+
+            // Export data
+            document.getElementById('exportDataBtn').addEventListener('click', exportData);
+
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // Close modal on background click
+            document.getElementById('deleteModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        }
+
+        // Setup session info
+        function setupSessionInfo() {
+            const time = sessionStartTime.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('sessionInfo').textContent = `Started at ${time} UTC`;
+        }
+
+        // Delete account
+        async function deleteAccount() {
+            const btn = document.getElementById('confirmDeleteBtn');
+            try {
+                btn.disabled = true;
+                const originalText = btn.textContent;
+                btn.innerHTML = '<span class="loading-spinner"></span><span class="loading-text">Deleting...</span>';
+
+                // Note: Delete account endpoint not yet implemented
+                // Clear local storage and redirect
+                localStorage.removeItem('seculens_token');
+                localStorage.removeItem('seculens_user');
+                window.location.href = '/login.html';
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                alert('Error deleting account: ' + (error.message || 'Please try again later'));
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        // Export data
+        async function exportData() {
+            const btn = document.getElementById('exportDataBtn');
+            try {
+                btn.disabled = true;
+                const originalText = btn.textContent;
+                btn.innerHTML = '<span class="loading-spinner"></span><span class="loading-text">Exporting...</span>';
+
+                // Call export API
+                const response = await SecuLens.api.apiCall('GET', '/account/stats');
+
+                // Download the data as JSON
+                const url = window.URL.createObjectURL(new Blob([JSON.stringify(response, null, 2)]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `securelensai-export-${Date.now()}.json`);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+
+                btn.disabled = false;
+                btn.textContent = originalText;
+            } catch (error) {
+                console.error('Error exporting data:', error);
+                alert('Error exporting data: ' + (error.message || 'Please try again later'));
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        // Logout
+        function logout() {
+            const btn = document.getElementById('logoutBtn');
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading-spinner"></span><span class="loading-text">Logging out...</span>';
+
+                // Clear storage and redirect
+                setTimeout(() => {
+                    if (window.SecuLens && window.SecuLens.api) {
+                        window.SecuLens.api.logout();
+                    } else {
+                        localStorage.removeItem('seculens_token');
+                        localStorage.removeItem('seculens_user');
+                        window.location.href = '/login.html';
+                    }
+                }, 500);
+            } catch (error) {
+                console.error('Error logging out:', error);
+                btn.disabled = false;
+                btn.textContent = 'Logout';
+            }
+        }
+
+        // Utility: Format relative time
+        function formatRelativeTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            if (days < 7) return `${days}d ago`;
+
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+    </script>
+</body>
+</html>

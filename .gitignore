@@ -1,0 +1,143 @@
+# ============================================
+# Python
+# ============================================
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+instance/
+.pytest_cache/
+.coverage
+.env
+.venv
+
+# ============================================
+# Node.js / Frontend
+# ============================================
+
+node_modules/
+npm-debug.log
+yarn-error.log
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Next.js
+.next/
+out/
+build/
+.vercel/
+.env.local
+.env*.local
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.AppleDouble
+.LSOverride
+*.code-workspace
+
+# ============================================
+# OS Specific
+# ============================================
+
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100
+.Trashes
+
+# ============================================
+# Project Specific
+# ============================================
+
+# Uploaded log files
+backend/uploads/
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Sample logs (keep these)
+!backend/sample_logs/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+instance/
+
+# API Keys and secrets
+.env
+.env.local
+.env.*.local
+secrets.yaml
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Editor backups
+*.bak
+*.swp
+*.swo
+*~
+
+# Compiled Python
+*.pyc
+*.pyo
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# ============================================
+# IDE Configuration (local, not checked in)
+# ============================================
+
+.vscode/settings.json
+.vscode/launch.json
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml

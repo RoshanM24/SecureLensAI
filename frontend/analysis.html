@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analysis Dashboard - Secure Lens AI</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Navbar Container -->
+  <div id="navbar-container"></div>
+
+  <!-- Main Analysis Dashboard -->
+  <main class="analysis-container">
+    <!-- Left Sidebar -->
+    <aside class="analysis-sidebar">
+      <!-- Upload Card -->
+      <div class="card upload-card">
+        <h3 class="card-header"><span class="icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span> Upload Log File</h3>
+
+        <!-- Drag and Drop Zone -->
+        <div id="dropZone" class="drop-zone">
+          <div class="drop-zone-content">
+            <div class="drop-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#8b95b0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+            <p class="drop-text">Drag and drop your log file here</p>
+            <p class="drop-subtext">or click to browse</p>
+          </div>
+          <input type="file" id="fileInput" class="file-input" accept=".json,.csv,.log,.txt" />
+        </div>
+
+        <!-- Upload Progress -->
+        <div id="uploadProgress" class="upload-progress hidden">
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+          <div id="uploadStatus" class="upload-status">Uploading...</div>
+        </div>
+
+        <!-- Upload Error -->
+        <div id="uploadError" class="upload-error hidden"></div>
+
+        <!-- Upload Success -->
+        <div id="uploadSuccess" class="upload-success hidden"></div>
+      </div>
+
+      <!-- Recent Analyses List -->
+      <div class="card recent-analyses-card">
+        <h3 class="card-header"><span class="icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Recent Analyses</h3>
+        <div id="analysesList" class="analyses-list">
+          <div class="analyses-loading">
+            <div class="spinner"></div>
+            <p>Loading analyses...</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <section class="analysis-main">
+      <!-- Tab Navigation -->
+      <div class="tab-container">
+        <div class="tab-nav">
+          <button class="tab-button active" data-tab="overview">Overview</button>
+          <button class="tab-button" data-tab="anomalies">Anomalies</button>
+          <button class="tab-button" data-tab="mitre">MITRE ATT&CK</button>
+          <button class="tab-button" data-tab="timeline">Timeline</button>
+          <button class="tab-button" data-tab="logs">Logs</button>
+        </div>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content active">
+        <!-- Overview Tab -->
+        <div id="overview-tab" class="tab-pane active">
+          <div id="noAnalysisPlaceholder" class="no-analysis-placeholder">
+            <div class="placeholder-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <h2>No Analysis Selected</h2>
+            <p>Upload a log file or select a recent analysis to view detailed results</p>
+          </div>
+
+          <div id="overviewContent" class="overview-content hidden">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon-box">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div class="stat-info">
+                  <p class="stat-label">Total Events</p>
+                  <p class="stat-value" id="stat-totalEvents">0</p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon-box warning">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <div class="stat-info">
+                  <p class="stat-label">Risk Score</p>
+                  <p class="stat-value" id="stat-riskScore">0%</p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon-box">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                </div>
+                <div class="stat-info">
+                  <p class="stat-label">Unique IPs</p>
+                  <p class="stat-value" id="stat-uniqueIPs">0</p>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon-box danger">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div class="stat-info">
+                  <p class="stat-label">Anomalies Found</p>
+                  <p class="stat-value" id="stat-anomalies">0</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analysis Output Section -->
+            <div class="card summary-card">
+              <div class="card-header-with-type">
+                <h3 id="analysisType">ANALYSIS OUTPUT</h3>
+              </div>
+
+              <!-- Scrollable Analysis Content -->
+              <div class="analysis-output-container">
+                <!-- Executive Summary -->
+                <div class="analysis-section">
+                  <h4>Executive Summary</h4>
+                  <p id="summaryText" class="analysis-text">
+                    Analysis summary will appear here...
+                  </p>
+                </div>
+
+                <!-- Additional Findings -->
+                <div class="analysis-section">
+                  <h4>Additional Findings</h4>
+                  <p id="detectionDetails" class="analysis-text">
+                    Detection details will appear here...
+                  </p>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="analysis-section">
+                  <h4>Recommendations</h4>
+                  <ul id="recommendationsAnalysis" class="recommendations-analysis">
+                    <li>Analysis will provide security recommendations</li>
+                  </ul>
+                </div>
+
+                <!-- Reference Guide -->
+                <div class="analysis-section reference-guide">
+                  <h4>Explore More</h4>
+                  <div class="reference-items">
+                    <div class="reference-item">
+                      <strong>Anomalies Tab:</strong> Detailed list of detected security threats with severity levels and confidence scores
+                    </div>
+                    <div class="reference-item">
+                      <strong>Timeline Tab:</strong> Chronological view of significant security events and anomalies
+                    </div>
+                    <div class="reference-item">
+                      <strong>Logs Tab:</strong> Complete searchable database of all parsed log entries with filtering capabilities
+                    </div>
+                    <div class="reference-item">
+                      <strong>MITRE ATT&CK Tab:</strong> Threat techniques mapped to MITRE ATT&CK framework for standardized threat classification
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Risk Level Bar -->
+              <div class="risk-section">
+                <h4>Risk Assessment</h4>
+                <div class="risk-level-container">
+                  <div class="risk-bar-wrapper">
+                    <div id="riskBar" class="risk-bar">
+                      <div class="risk-fill"></div>
+                    </div>
+                  </div>
+                  <p id="riskLevel" class="risk-level-text">Low Risk</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Suspicious Activities Section -->
+            <div class="card suspicious-activities-card">
+              <h3 class="card-header"><span class="icon-box danger"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span> Suspicious Activities Detected</h3>
+              <div id="anomaliesList" class="anomalies-list">
+                <p class="no-anomalies">No suspicious activities detected</p>
+              </div>
+            </div>
+
+            <!-- Recommendations Section -->
+            <div class="card recommendations-card">
+              <h3 class="card-header"><span class="icon-box success"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span> Recommendations</h3>
+              <div id="recommendationsList" class="recommendations-list">
+                <div class="detection-details">
+                  <h4>Detection Details</h4>
+                  <p id="detectionDetails">Detection details will appear here...</p>
+                </div>
+                <ul id="recommendationsContent" class="recommendations-content">
+                  <li>Analysis will provide security recommendations</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anomalies Tab -->
+        <div id="anomalies-tab" class="tab-pane">
+          <div id="noAnalysisPlaceholderAnomalies" class="no-analysis-placeholder">
+            <div class="placeholder-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+            <h2>No Analysis Selected</h2>
+            <p>Upload a log file or select a recent analysis to view anomalies</p>
+          </div>
+
+          <div id="anomaliesContent" class="anomalies-content hidden">
+            <div class="card">
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Anomaly</th>
+                      <th>Severity</th>
+                      <th>Confidence</th>
+                      <th>MITRE Technique</th>
+                    </tr>
+                  </thead>
+                  <tbody id="anomaliesTableBody">
+                    <tr><td colspan="4">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MITRE ATT&CK Tab -->
+        <div id="mitre-tab" class="tab-pane">
+          <div id="noAnalysisPlaceholderMitre" class="no-analysis-placeholder">
+            <div class="placeholder-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></div>
+            <h2>No Analysis Selected</h2>
+            <p>Upload a log file or select a recent analysis to view MITRE ATT&CK mapping</p>
+          </div>
+
+          <div id="mitreContent" class="mitre-content hidden">
+            <div class="card">
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Technique ID</th>
+                      <th>Name</th>
+                      <th>Tactic</th>
+                      <th>Count</th>
+                    </tr>
+                  </thead>
+                  <tbody id="mitreTableBody">
+                    <tr><td colspan="4">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline Tab -->
+        <div id="timeline-tab" class="tab-pane">
+          <div id="noAnalysisPlaceholderTimeline" class="no-analysis-placeholder">
+            <div class="placeholder-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <h2>No Analysis Selected</h2>
+            <p>Upload a log file or select a recent analysis to view event timeline</p>
+          </div>
+
+          <div id="timelineContent" class="timeline-content hidden">
+            <div class="card">
+              <div id="timelineList" class="timeline">
+                <p>Loading timeline...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logs Tab -->
+        <div id="logs-tab" class="tab-pane">
+          <div id="noAnalysisPlaceholderLogs" class="no-analysis-placeholder">
+            <div class="placeholder-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+            <h2>No Analysis Selected</h2>
+            <p>Upload a log file or select a recent analysis to view parsed logs</p>
+          </div>
+
+          <div id="logsContent" class="logs-content hidden">
+            <div class="card">
+              <div class="table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date/Time</th>
+                      <th>User</th>
+                      <th>Client IP</th>
+                      <th>Action</th>
+                      <th>URL</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="logsTableBody">
+                    <tr><td colspan="6">Loading...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination -->
+              <div class="pagination">
+                <button id="prevPageBtn" class="pagination-btn">← Previous</button>
+                <span id="pageInfo" class="page-info">Page 1</span>
+                <button id="nextPageBtn" class="pagination-btn">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/api-client.js"></script>
+  <script src="js/navbar.js"></script>
+  <script>
+    // Check if user is logged in
+    if (!window.SecuLens || !window.SecuLens.api || !window.SecuLens.api.isLoggedIn()) {
+      window.location.href = '/login.html';
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       ANALYSIS PAGE SPECIFIC STYLES
+       ========================================================================== */
+
+    /* Auth check and page setup */
+    :root {
+      --primary-purple: #a855f7;
+      --secondary-cyan: #06b6d4;
+      --bg-dark: #0a0e1a;
+      --card-bg: rgba(15, 18, 35, 0.85);
+      --card-border: 1px solid rgba(168, 85, 247, 0.15);
+      --text-primary: #e0e7ff;
+      --text-secondary: #8b95b0;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Main container with navbar offset */
+    .analysis-container {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 2rem;
+      padding: 90px 2rem 2rem 2rem;
+      min-height: 100vh;
+      background: var(--bg-dark);
+    }
+
+    @media (max-width: 1024px) {
+      .analysis-container {
+        grid-template-columns: 1fr;
+        padding: 90px 1rem 2rem 1rem;
+        gap: 1rem;
+      }
+    }
+
+    /* ==========================================================================
+       SIDEBAR STYLES
+       ========================================================================== */
+
+    .analysis-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .analysis-sidebar {
+        grid-column: 1;
+        grid-row: 1;
+      }
+    }
+
+    /* Card Base Styles */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      border-color: rgba(168, 85, 247, 0.3);
+      box-shadow: 0 8px 32px rgba(168, 85, 247, 0.1);
+    }
+
+    .card-header {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-header-with-type {
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header-with-type h3 {
+      font-size: 1rem;
+      color: var(--secondary-cyan);
+      margin: 0;
+    }
+
+    /* Upload Card */
+    .upload-card {
+      position: sticky;
+      top: 90px;
+      z-index: 100;
+    }
+
+    .drop-zone {
+      position: relative;
+      border: 2px dashed rgba(168, 85, 247, 0.4);
+      border-radius: 8px;
+      padding: 2rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: rgba(168, 85, 247, 0.02);
+    }
+
+    .drop-zone:hover {
+      border-color: var(--primary-purple);
+      background: rgba(168, 85, 247, 0.08);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .drop-zone.drag-over {
+      border-color: var(--primary-purple);
+      background: rgba(168, 85, 247, 0.15);
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+    }
+
+    .drop-zone-content {
+      pointer-events: none;
+    }
+
+    .drop-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .drop-text {
+      color: var(--text-primary);
+      font-weight: 500;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .drop-subtext {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin: 0;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    /* Upload Progress */
+    .upload-progress {
+      margin-top: 1rem;
+    }
+
+    .upload-progress.hidden {
+      display: none;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(168, 85, 247, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-purple), var(--secondary-cyan));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .upload-status {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    /* Upload Messages */
+    .upload-error,
+    .upload-success {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      text-align: center;
+    }
+
+    .upload-error.hidden,
+    .upload-success.hidden {
+      display: none;
+    }
+
+    .upload-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .upload-success {
+      background: rgba(34, 197, 94, 0.1);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    /* Recent Analyses List */
+    .analyses-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .analyses-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .analyses-list::-webkit-scrollbar-track {
+      background: rgba(168, 85, 247, 0.05);
+      border-radius: 3px;
+    }
+
+    .analyses-list::-webkit-scrollbar-thumb {
+      background: rgba(168, 85, 247, 0.3);
+      border-radius: 3px;
+    }
+
+    .analyses-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(168, 85, 247, 0.5);
+    }
+
+    .analyses-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      color: var(--text-secondary);
+    }
+
+    .analyses-item {
+      padding: 0.75rem;
+      border-radius: 6px;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+      transition: var(--transition);
+      background: rgba(168, 85, 247, 0.04);
+    }
+
+    .analyses-item:hover {
+      background: rgba(168, 85, 247, 0.1);
+      border-left-color: var(--primary-purple);
+    }
+
+    .analyses-item.selected {
+      background: rgba(168, 85, 247, 0.15);
+      border-left-color: var(--primary-purple);
+    }
+
+    .analyses-item-filename {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+      font-size: 0.875rem;
+      word-break: break-word;
+    }
+
+    .analyses-item-risk {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .risk-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.7rem;
+    }
+
+    .risk-badge.very-high {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+
+    .risk-badge.high {
+      background: rgba(249, 115, 22, 0.2);
+      color: #fdba74;
+    }
+
+    .risk-badge.medium {
+      background: rgba(234, 179, 8, 0.2);
+      color: #fde047;
+    }
+
+    .risk-badge.low {
+      background: rgba(34, 197, 94, 0.2);
+      color: #86efac;
+    }
+
+    .risk-badge.very-low {
+      background: rgba(6, 182, 212, 0.2);
+      color: #a5f3fc;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(168, 85, 247, 0.2);
+      border-top: 2px solid var(--primary-purple);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ==========================================================================
+       MAIN CONTENT AREA
+       ========================================================================== */
+
+    .analysis-main {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Tab Navigation */
+    .tab-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: var(--card-border);
+      border-radius: 12px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 0;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+      overflow-x: auto;
+    }
+
+    .tab-nav::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .tab-nav::-webkit-scrollbar-thumb {
+      background: rgba(168, 85, 247, 0.3);
+      border-radius: 2px;
+    }
+
+    .tab-button {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: var(--transition);
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .tab-button:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-button.active {
+      color: var(--primary-purple);
+      border-bottom-color: var(--primary-purple);
+    }
+
+    /* Tab Content */
+    .tab-content {
+      position: relative;
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Placeholder */
+    .no-analysis-placeholder {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .placeholder-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    .no-analysis-placeholder h2 {
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .no-analysis-placeholder p {
+      margin: 0;
+    }
+
+    /* Hidden class */
+    .hidden {
+      display: none;
+    }
+
+    /* ==========================================================================
+       OVERVIEW TAB STYLES
+       ========================================================================== */
+
+    .overview-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .overview-content.hidden {
+      display: none;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      border-color: rgba(168, 85, 247, 0.3);
+      box-shadow: 0 8px 32px rgba(168, 85, 247, 0.1);
+    }
+
+    /* Icon Box - teal themed rounded square icons */
+    .icon-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(13, 148, 136, 0.15);
+      color: #0d9488;
+      flex-shrink: 0;
+    }
+
+    .icon-box.danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+    }
+
+    .icon-box.success {
+      background: rgba(34, 197, 94, 0.12);
+      color: #4ade80;
+    }
+
+    /* Stat Icon Box - larger version for stat cards */
+    .stat-icon-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(13, 148, 136, 0.15);
+      color: #0d9488;
+      flex-shrink: 0;
+    }
+
+    .stat-icon-box.warning {
+      background: rgba(234, 179, 8, 0.12);
+      color: #facc15;
+    }
+
+    .stat-icon-box.danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .stat-info {
+      flex: 1;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin: 0 0 0.25rem 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    /* Summary Card */
+    .summary-card {
+      margin-bottom: 0;
+    }
+
+    .risk-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .risk-section h4 {
+      margin-bottom: 0.75rem;
+    }
+
+    .risk-level-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .risk-bar-wrapper {
+      position: relative;
+      height: 32px;
+      background: rgba(168, 85, 247, 0.05);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(168, 85, 247, 0.1);
+    }
+
+    .risk-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e 0%, #eab308 40%, #f97316 70%, #ef4444 100%);
+      width: 0%;
+      transition: width 0.5s ease;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 0.75rem;
+    }
+
+    .risk-fill {
+      display: none;
+    }
+
+    .risk-level-text {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .summary-text-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-text-section h4 {
+      margin-bottom: 0.75rem;
+    }
+
+    .summary-paragraph {
+      color: var(--text-primary);
+      line-height: 1.7;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .assessment-box {
+      background: rgba(6, 182, 212, 0.05);
+      border-left: 3px solid var(--secondary-cyan);
+      padding: 1rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .assessment-box p {
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    /* Anomalies List */
+    .anomalies-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .anomaly-item {
+      background: rgba(168, 85, 247, 0.04);
+      border-left: 3px solid transparent;
+      border-radius: 6px;
+      padding: 1rem;
+      transition: var(--transition);
+    }
+
+    .anomaly-item.critical {
+      border-left-color: #ef4444;
+    }
+
+    .anomaly-item.high {
+      border-left-color: #f97316;
+    }
+
+    .anomaly-item.medium {
+      border-left-color: #eab308;
+    }
+
+    .anomaly-item.low {
+      border-left-color: #06b6d4;
+    }
+
+    .anomaly-item:hover {
+      background: rgba(168, 85, 247, 0.1);
+    }
+
+    .anomaly-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .anomaly-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
+    }
+
+    .anomaly-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-severity {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .badge-severity.critical {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+
+    .badge-severity.high {
+      background: rgba(249, 115, 22, 0.2);
+      color: #fdba74;
+    }
+
+    .badge-severity.medium {
+      background: rgba(234, 179, 8, 0.2);
+      color: #fde047;
+    }
+
+    .badge-severity.low {
+      background: rgba(6, 182, 212, 0.2);
+      color: #a5f3fc;
+    }
+
+    .badge-confidence {
+      background: rgba(168, 85, 247, 0.2);
+      color: #d8b4fe;
+    }
+
+    .anomaly-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .anomaly-technique {
+      font-size: 0.85rem;
+      color: var(--secondary-cyan);
+      font-weight: 500;
+    }
+
+    .no-anomalies {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 2rem;
+    }
+
+    /* Recommendations */
+    .recommendations-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .detection-details {
+      background: rgba(168, 85, 247, 0.04);
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+    }
+
+    .detection-details h4 {
+      margin-bottom: 0.75rem;
+    }
+
+    .detection-details p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .recommendations-content {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .recommendations-content li {
+      padding-left: 1.5rem;
+      position: relative;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .recommendations-content li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #22c55e;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    /* ==========================================================================
+       TABLES STYLES
+       ========================================================================== */
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .data-table thead {
+      background: rgba(168, 85, 247, 0.08);
+      border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+    }
+
+    .data-table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--primary-purple);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.8rem;
+    }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+      transition: var(--transition);
+    }
+
+    .data-table tbody tr:hover {
+      background: rgba(168, 85, 247, 0.06);
+    }
+
+    .data-table td {
+      padding: 1rem;
+      color: var(--text-primary);
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-badge.allowed {
+      background: rgba(34, 197, 94, 0.2);
+      color: #86efac;
+    }
+
+    .status-badge.blocked {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+    }
+
+    /* ==========================================================================
+       TIMELINE STYLES
+       ========================================================================== */
+
+    .timeline {
+      position: relative;
+      padding: 2rem 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--primary-purple), transparent);
+    }
+
+    .timeline-event {
+      position: relative;
+      padding-left: 60px;
+      margin-bottom: 2rem;
+    }
+
+    .timeline-event::before {
+      content: '';
+      position: absolute;
+      left: 9px;
+      top: 5px;
+      width: 24px;
+      height: 24px;
+      background: var(--card-bg);
+      border: 2px solid var(--primary-purple);
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .timeline-event.critical::before {
+      border-color: #ef4444;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    }
+
+    .timeline-event.high::before {
+      border-color: #f97316;
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+    }
+
+    .timeline-event.medium::before {
+      border-color: #eab308;
+      box-shadow: 0 0 10px rgba(234, 179, 8, 0.5);
+    }
+
+    .timeline-event.low::before {
+      border-color: #06b6d4;
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    }
+
+    .timeline-event-name {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-event-time {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-event-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       PAGINATION
+       ========================================================================== */
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      padding: 2rem 1rem;
+      border-top: 1px solid rgba(168, 85, 247, 0.1);
+      margin-top: 1rem;
+    }
+
+    .pagination-btn {
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+      color: var(--primary-purple);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: rgba(168, 85, 247, 0.4);
+    }
+
+    .pagination-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .page-info {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+  </style>
+
+  <script>
+    // ==========================================================================
+    // ANALYSIS PAGE JAVASCRIPT
+    // ==========================================================================
+
+    // Check authentication on page load
+    window.addEventListener('load', () => {
+      const token = window.SecuLens.api.getToken();
+      if (!token) {
+        window.location.href = '/login.html';
+      }
+    });
+
+    // Current analysis data
+    let currentAnalysis = null;
+    let currentPage = 1;
+    const logsPerPage = 20;
+
+    // ==========================================================================
+    // LOAD ANALYSES
+    // ==========================================================================
+
+    async function loadAnalyses() {
+      const analysesList = document.getElementById('analysesList');
+
+      try {
+        const response = await window.SecuLens.api.getAnalyses();
+        const analyses = response.analyses || [];
+
+        if (analyses.length === 0) {
+          analysesList.innerHTML = `
+            <p style="color: var(--text-secondary); text-align: center; padding: 1rem;">
+              No analyses yet. Upload a log file to get started.
+            </p>
+          `;
+          return;
+        }
+
+        analysesList.innerHTML = analyses
+          .map(
+            (item) => `
+          <div class="analyses-item" onclick="loadAnalysis('${item.analysis.id}', event)">
+            <div class="analyses-item-filename">${escapeHtml(item.file.filename)}</div>
+            <div class="analyses-item-risk">
+              <span>Risk Score:</span>
+              <span class="risk-badge ${getRiskLevel(item.analysis.risk_score)}">${item.analysis.risk_score}%</span>
+            </div>
+          </div>
+        `
+          )
+          .join('');
+      } catch (error) {
+        console.error('Error loading analyses:', error);
+        analysesList.innerHTML = `
+          <p style="color: #fca5a5; text-align: center; padding: 1rem;">
+            Error loading analyses
+          </p>
+        `;
+      }
+    }
+
+    // ==========================================================================
+    // LOAD ANALYSIS
+    // ==========================================================================
+
+    async function loadAnalysis(id, evt) {
+      // Capture the clicked element BEFORE the await (currentTarget becomes null after await)
+      const clickedItem = evt ? evt.currentTarget : null;
+
+      try {
+        const analysis = await window.SecuLens.api.getAnalysis(id);
+        currentAnalysis = analysis;
+        currentPage = 1;
+
+        // Update selected state in sidebar
+        document.querySelectorAll('.analyses-item').forEach((item) => {
+          item.classList.remove('selected');
+        });
+
+        // Mark the clicked item as selected
+        if (clickedItem) {
+          clickedItem.classList.add('selected');
+        }
+
+        // Display analysis
+        displayAnalysis();
+      } catch (error) {
+        console.error('Error loading analysis:', error);
+      }
+    }
+
+    // ==========================================================================
+    // DISPLAY ANALYSIS
+    // ==========================================================================
+
+    function displayAnalysis() {
+      if (!currentAnalysis) return;
+
+      // Hide placeholders in all tabs
+      const placeholders = [
+        'noAnalysisPlaceholder', 'noAnalysisPlaceholderAnomalies', 'noAnalysisPlaceholderMitre',
+        'noAnalysisPlaceholderTimeline', 'noAnalysisPlaceholderLogs'
+      ];
+      placeholders.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+
+      // Show content in all tabs (they're hidden by the tab pane system, not by individual class)
+      const contentDivs = [
+        'overviewContent', 'anomaliesContent', 'mitreContent', 'timelineContent', 'logsContent'
+      ];
+      contentDivs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('hidden');
+      });
+
+      // Populate all tabs with data
+      displayOverview();
+      displayAnomalies();
+      displayMitre();
+      displayTimeline();
+      displayLogs(1);
+
+      // Switch to Overview tab (this handles showing/hiding tab panes)
+      switchTab('overview');
+    }
+
+    // ==========================================================================
+    // DISPLAY OVERVIEW
+    // ==========================================================================
+
+    function displayOverview() {
+      const analysis = currentAnalysis;
+
+      // Update stats
+      const statTotalEvents = document.getElementById('stat-totalEvents');
+      if (statTotalEvents) statTotalEvents.textContent = analysis.total_events || analysis.metadata?.total_events || 0;
+
+      const statRiskScore = document.getElementById('stat-riskScore');
+      if (statRiskScore) statRiskScore.textContent = `${analysis.risk_score}%`;
+
+      const statUniqueIPs = document.getElementById('stat-uniqueIPs');
+      if (statUniqueIPs) statUniqueIPs.textContent = analysis.stats?.unique_ips || analysis.statistics?.unique_ips || 0;
+
+      const statAnomalies = document.getElementById('stat-anomalies');
+      if (statAnomalies) statAnomalies.textContent = analysis.anomaly_count || analysis.anomalies?.length || 0;
+
+      // Update analysis type
+      const analysisType = document.getElementById('analysisType');
+      if (analysisType) {
+        analysisType.innerHTML =
+          (analysis.stats?.ai_enabled === true || analysis.analysis_type === 'ai')
+            ? '<svg viewBox="0 0 24 24" width="20" height="20" style="vertical-align: middle; margin-right: 8px; fill: currentColor;"><path d="M12 2a4 4 0 0 1 4 4v1a2 2 0 0 1 2 2v1a8 8 0 0 1-16 0V9a2 2 0 0 1 2-2V6a4 4 0 0 1 4-4z"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><path d="M9.5 15a3.5 3.5 0 0 0 5 0"/></svg> AI-POWERED ANALYSIS'
+            : '<svg viewBox="0 0 24 24" width="20" height="20" style="vertical-align: middle; margin-right: 8px; fill: currentColor;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> RULE-BASED ANALYSIS';
+      }
+
+      // Update risk bar
+      const riskBar = document.querySelector('.risk-bar');
+      if (riskBar) {
+        riskBar.style.width = `${analysis.risk_score}%`;
+      }
+
+      const riskLevelText = document.getElementById('riskLevel');
+      if (riskLevelText) {
+        const riskLevel = getRiskLevelName(analysis.risk_score);
+        riskLevelText.textContent = riskLevel;
+        riskLevelText.style.color = getRiskColor(analysis.risk_score);
+      }
+
+      // Update Analysis Output section with executive summary and findings
+      const summaryText = document.getElementById('summaryText');
+      if (summaryText) {
+        summaryText.textContent =
+          analysis.stats?.executive_summary ||
+          analysis.summary ||
+          'No summary available';
+      }
+
+      const detectionDetailsOutput = document.querySelector('.analysis-output-container #detectionDetails');
+      if (detectionDetailsOutput) {
+        detectionDetailsOutput.textContent =
+          analysis.stats?.additional_findings ||
+          analysis.stats?.risk_assessment ||
+          'Analysis complete';
+      }
+
+      const recommendationsAnalysis = document.getElementById('recommendationsAnalysis');
+      if (recommendationsAnalysis) {
+        const recommendations = analysis.stats?.recommendations || analysis.recommendations || [];
+        if (recommendations.length > 0) {
+          recommendationsAnalysis.innerHTML = recommendations
+            .map((rec) => `<li>${escapeHtml(rec)}</li>`)
+            .join('');
+        }
+      }
+
+      // Display anomalies
+      displayAnomaliesList();
+
+      // Display recommendations (in the Recommendations section)
+      displayRecommendations();
+    }
+
+    // ==========================================================================
+    // DISPLAY ANOMALIES LIST (IN OVERVIEW)
+    // ==========================================================================
+
+    function displayAnomaliesList() {
+      const analysis = currentAnalysis;
+      const anomaliesList = document.getElementById('anomaliesList');
+
+      if (!anomaliesList) return;
+
+      if (!analysis.anomalies || analysis.anomalies.length === 0) {
+        anomaliesList.innerHTML = '<p class="no-anomalies">No suspicious activities detected</p>';
+        return;
+      }
+
+      anomaliesList.innerHTML = analysis.anomalies
+        .map(
+          (anomaly) => `
+        <div class="anomaly-item ${anomaly.severity.toLowerCase()}">
+          <div class="anomaly-header">
+            <div class="anomaly-title">${escapeHtml(anomaly.rule_name || anomaly.name || 'Unknown')}</div>
+            <div class="anomaly-badges">
+              <span class="badge badge-severity ${anomaly.severity.toLowerCase()}">
+                ${anomaly.severity.toUpperCase()}
+              </span>
+              <span class="badge badge-confidence">${anomaly.confidence}%</span>
+            </div>
+          </div>
+          <div class="anomaly-description">${escapeHtml(anomaly.description)}</div>
+          <div class="anomaly-technique">
+            ${anomaly.mitre_technique ? `MITRE: ${escapeHtml(anomaly.mitre_technique)}` : ''}
+          </div>
+        </div>
+      `
+        )
+        .join('');
+    }
+
+    // ==========================================================================
+    // DISPLAY RECOMMENDATIONS
+    // ==========================================================================
+
+    function displayRecommendations() {
+      const analysis = currentAnalysis;
+      const recommendationsList = document.getElementById('recommendationsContent');
+
+      if (!recommendationsList) return;
+
+      const detectionDetails = document.getElementById('detectionDetails');
+      if (detectionDetails) {
+        detectionDetails.textContent =
+          analysis.stats?.additional_findings ||
+          analysis.stats?.risk_assessment ||
+          analysis.detection_details ||
+          'Detection analysis complete';
+      }
+
+      const recommendations = analysis.stats?.recommendations || analysis.recommendations || [];
+
+      if (!recommendations || recommendations.length === 0) {
+        recommendationsList.innerHTML =
+          '<li>Continue monitoring for suspicious activity patterns</li>';
+        return;
+      }
+
+      recommendationsList.innerHTML = recommendations
+        .map((rec) => `<li>${escapeHtml(rec)}</li>`)
+        .join('');
+    }
+
+    // ==========================================================================
+    // DISPLAY ANOMALIES TAB
+    // ==========================================================================
+
+    function displayAnomalies() {
+      const analysis = currentAnalysis;
+      const anomaliesTableBody = document.getElementById('anomaliesTableBody');
+
+      if (!anomaliesTableBody) return;
+
+      if (!analysis.anomalies || analysis.anomalies.length === 0) {
+        anomaliesTableBody.innerHTML =
+          '<tr><td colspan="4" style="text-align: center; color: var(--text-secondary);">No anomalies detected</td></tr>';
+        return;
+      }
+
+      anomaliesTableBody.innerHTML = analysis.anomalies
+        .map(
+          (anomaly) => `
+        <tr>
+          <td>${escapeHtml(anomaly.rule_name || anomaly.name || 'Unknown')}</td>
+          <td>
+            <span class="badge badge-severity ${anomaly.severity.toLowerCase()}">
+              ${anomaly.severity.toUpperCase()}
+            </span>
+          </td>
+          <td>${anomaly.confidence}%</td>
+          <td>${anomaly.mitre_technique ? escapeHtml(anomaly.mitre_technique) : 'N/A'}</td>
+        </tr>
+      `
+        )
+        .join('');
+    }
+
+    // ==========================================================================
+    // DISPLAY MITRE TAB
+    // ==========================================================================
+
+    function displayMitre() {
+      const analysis = currentAnalysis;
+      const mitreTableBody = document.getElementById('mitreTableBody');
+
+      if (!mitreTableBody) return;
+
+      const mitreMappings = analysis.mitre_mappings || analysis.mitre_techniques || [];
+
+      if (!mitreMappings || mitreMappings.length === 0) {
+        mitreTableBody.innerHTML =
+          '<tr><td colspan="4" style="text-align: center; color: var(--text-secondary);">No MITRE techniques detected</td></tr>';
+        return;
+      }
+
+      mitreTableBody.innerHTML = mitreMappings
+        .map(
+          (technique) => `
+        <tr>
+          <td><span style="color: var(--primary-purple); font-weight: 600;">${escapeHtml(technique.technique_id || technique.id || '')}</span></td>
+          <td>${escapeHtml(technique.name)}</td>
+          <td>${escapeHtml(technique.tactic)}</td>
+          <td style="font-weight: 600;">${technique.count}</td>
+        </tr>
+      `
+        )
+        .join('');
+    }
+
+    // ==========================================================================
+    // DISPLAY TIMELINE
+    // ==========================================================================
+
+    function displayTimeline() {
+      const analysis = currentAnalysis;
+      const timelineList = document.getElementById('timelineList');
+
+      if (!timelineList) return;
+
+      const timelineEvents = analysis.timeline_data || analysis.timeline || [];
+
+      if (!timelineEvents || timelineEvents.length === 0) {
+        timelineList.innerHTML =
+          '<p style="text-align: center; color: var(--text-secondary);">No timeline events</p>';
+        return;
+      }
+
+      timelineList.innerHTML = timelineEvents
+        .map(
+          (event) => `
+        <div class="timeline-event ${(event.severity || 'low').toLowerCase()}">
+          <div class="timeline-event-name">${escapeHtml(event.event || event.name || '')}</div>
+          <div class="timeline-event-description">${escapeHtml(event.description || '')}</div>
+        </div>
+      `
+        )
+        .join('');
+    }
+
+    // ==========================================================================
+    // DISPLAY LOGS
+    // ==========================================================================
+
+    async function displayLogs(page) {
+      currentPage = page;
+      try {
+        const response = await window.SecuLens.api.getAnalysisLogs(
+          currentAnalysis.id,
+          page
+        );
+        const logs = response.logs || [];
+        const totalPages = response.total_pages || 1;
+
+        const logsTableBody = document.getElementById('logsTableBody');
+
+        if (logs.length === 0) {
+          logsTableBody.innerHTML =
+            '<tr><td colspan="6" style="text-align: center; color: var(--text-secondary);">No logs available</td></tr>';
+        } else {
+          logsTableBody.innerHTML = logs
+            .map(
+              (log) => `
+            <tr>
+              <td>${escapeHtml(log.datetime)}</td>
+              <td>${escapeHtml(log.user)}</td>
+              <td>${escapeHtml(log.client_ip)}</td>
+              <td>${escapeHtml(log.action)}</td>
+              <td style="max-width: 200px; word-break: break-all;">${escapeHtml(log.url)}</td>
+              <td>
+                <span class="status-badge ${String(log.action || '').toLowerCase() === 'allowed' ? 'allowed' : 'blocked'}">
+                  ${escapeHtml(String(log.action || log.status || ''))}
+                </span>
+              </td>
+            </tr>
+          `
+            )
+            .join('');
+        }
+
+        // Update pagination
+        document.getElementById('pageInfo').textContent = `Page ${page} of ${totalPages}`;
+        document.getElementById('prevPageBtn').disabled = page === 1;
+        document.getElementById('nextPageBtn').disabled = page === totalPages;
+      } catch (error) {
+        console.error('Error loading logs:', error);
+        document.getElementById('logsTableBody').innerHTML =
+          '<tr><td colspan="6" style="text-align: center; color: #fca5a5;">Error loading logs</td></tr>';
+      }
+    }
+
+    // ==========================================================================
+    // FILE UPLOAD
+    // ==========================================================================
+
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleFileUpload(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFileUpload(e.target.files[0]);
+      }
+    });
+
+    async function handleFileUpload(file) {
+      const uploadProgress = document.getElementById('uploadProgress');
+      const uploadStatus = document.getElementById('uploadStatus');
+      const uploadError = document.getElementById('uploadError');
+      const uploadSuccess = document.getElementById('uploadSuccess');
+      const progressFill = document.getElementById('progressFill');
+
+      // Reset messages
+      uploadError.classList.add('hidden');
+      uploadSuccess.classList.add('hidden');
+      uploadProgress.classList.remove('hidden');
+
+      // Validate file type
+      const validTypes = [
+        'application/json',
+        'text/plain',
+        'text/csv',
+        'application/octet-stream'
+      ];
+      if (!validTypes.includes(file.type) && !file.name.match(/\.(json|csv|log|txt)$/i)) {
+        uploadError.textContent = 'Invalid file type. Please upload .json, .csv, .log, or .txt files.';
+        uploadError.classList.remove('hidden');
+        uploadProgress.classList.add('hidden');
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Simulate upload progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * 30;
+          if (progress > 90) progress = 90;
+          progressFill.style.width = `${progress}%`;
+          uploadStatus.textContent = `Uploading... ${Math.round(progress)}%`;
+        }, 300);
+
+        const response = await window.SecuLens.api.uploadFile(formData);
+
+        clearInterval(progressInterval);
+        progressFill.style.width = '100%';
+        uploadStatus.textContent = 'Upload complete!';
+
+        uploadProgress.classList.add('hidden');
+        const analysisId = response.analysis?.id || response.analysis_id;
+        uploadSuccess.innerHTML = `✓ File uploaded and analyzed successfully!`;
+        uploadSuccess.classList.remove('hidden');
+
+        // Reset file input
+        fileInput.value = '';
+
+        // Reload analyses list and auto-load the new analysis
+        setTimeout(async () => {
+          await loadAnalyses();
+          uploadSuccess.classList.add('hidden');
+          if (analysisId) {
+            loadAnalysis(analysisId, null);
+          }
+        }, 1500);
+      } catch (error) {
+        uploadProgress.classList.add('hidden');
+        uploadError.textContent = `Upload failed: ${error.message}`;
+        uploadError.classList.remove('hidden');
+        console.error('Upload error:', error);
+      }
+    }
+
+    // ==========================================================================
+    // TAB SWITCHING
+    // ==========================================================================
+
+    document.querySelectorAll('.tab-button').forEach((button) => {
+      button.addEventListener('click', () => {
+        const tabName = button.getAttribute('data-tab');
+        switchTab(tabName);
+      });
+    });
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-pane').forEach((pane) => {
+        pane.classList.remove('active');
+      });
+
+      // Show selected tab
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+
+      // Update button states
+      document.querySelectorAll('.tab-button').forEach((button) => {
+        button.classList.remove('active');
+        if (button.getAttribute('data-tab') === tabName) {
+          button.classList.add('active');
+        }
+      });
+    }
+
+    // ==========================================================================
+    // PAGINATION
+    // ==========================================================================
+
+    document.getElementById('prevPageBtn').addEventListener('click', () => {
+      if (currentPage > 1) {
+        displayLogs(currentPage - 1);
+      }
+    });
+
+    document.getElementById('nextPageBtn').addEventListener('click', () => {
+      displayLogs(currentPage + 1);
+    });
+
+    // ==========================================================================
+    // UTILITY FUNCTIONS
+    // ==========================================================================
+
+    function getRiskLevel(score) {
+      if (score >= 80) return 'very-high';
+      if (score >= 60) return 'high';
+      if (score >= 40) return 'medium';
+      if (score >= 20) return 'low';
+      return 'very-low';
+    }
+
+    function getRiskLevelName(score) {
+      if (score >= 80) return 'Very High Risk';
+      if (score >= 60) return 'High Risk';
+      if (score >= 40) return 'Medium Risk';
+      if (score >= 20) return 'Low Risk';
+      return 'Very Low Risk';
+    }
+
+    function getRiskColor(score) {
+      if (score >= 80) return '#ef4444';
+      if (score >= 60) return '#f97316';
+      if (score >= 40) return '#eab308';
+      if (score >= 20) return '#22c55e';
+      return '#06b6d4';
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ==========================================================================
+    // INITIALIZE
+    // ==========================================================================
+
+    loadAnalyses();
+  </script>
+</body>
+</html>

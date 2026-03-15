@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Secure Lens AI</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c1f 0%, #1a1535 50%, #2d1b4e 100%);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #navbar-container {
+            margin-bottom: 40px;
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #a78bfa;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: #b8a0d4;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Glass Morphism Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(167, 139, 250, 0.4);
+            box-shadow: 0 8px 32px rgba(167, 139, 250, 0.15);
+        }
+
+        /* Contact Form */
+        .form-card h2 {
+            font-size: 1.8rem;
+            color: #a78bfa;
+            margin-bottom: 8px;
+        }
+
+        .form-card .subtitle {
+            color: #b8a0d4;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d0c0e8;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(167, 139, 250, 0.6);
+            box-shadow: 0 0 15px rgba(167, 139, 250, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px 25px;
+            background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(167, 139, 250, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .message.success {
+            display: block;
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #86efac;
+        }
+
+        .message.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+        }
+
+        /* Contact Info Section */
+        .info-card h2 {
+            font-size: 1.5rem;
+            color: #a78bfa;
+            margin-bottom: 25px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(167, 139, 250, 0.1);
+        }
+
+        .contact-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .contact-text {
+            flex: 1;
+        }
+
+        .contact-text strong {
+            display: block;
+            color: #d0c0e8;
+            margin-bottom: 3px;
+        }
+
+        .contact-text span {
+            color: #b8a0d4;
+            font-size: 0.9rem;
+        }
+
+        .faq-section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        .faq-section h3 {
+            color: #a78bfa;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .faq-item {
+            margin-bottom: 12px;
+        }
+
+        .faq-question {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid transparent;
+        }
+
+        .faq-question:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-left-color: #a78bfa;
+        }
+
+        .faq-question.active {
+            color: #a78bfa;
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 12px 15px;
+            color: #b8a0d4;
+            font-size: 0.9rem;
+            background: rgba(167, 139, 250, 0.05);
+            border-radius: 0 0 6px 6px;
+            margin-top: 5px;
+        }
+
+        .faq-answer.active {
+            display: block;
+        }
+
+        .office-hours {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(167, 139, 250, 0.2);
+        }
+
+        .office-hours h3 {
+            color: #a78bfa;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .office-hours p {
+            color: #b8a0d4;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .submit-btn.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <div class="contact-container">
+        <div class="page-header">
+            <h1>Get in Touch</h1>
+            <p>We're here to help with your security needs</p>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Contact Form -->
+            <div class="card form-card">
+                <h2>Get in Touch</h2>
+                <p class="subtitle">Our security team is here to help</p>
+
+                <div id="formMessage" class="message"></div>
+
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="subject">Subject *</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Select a subject...</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="support">Technical Support</option>
+                                <option value="bug">Bug Report</option>
+                                <option value="feature">Feature Request</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="priority">Priority *</label>
+                            <select id="priority" name="priority" required>
+                                <option value="">Select priority...</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">Send Message</button>
+                </form>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="card info-card">
+                <h2>Contact Information</h2>
+
+                <div class="contact-item">
+                    <div class="contact-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6" stroke="var(--bg-primary, #0f172a)" stroke-width="2" fill="none"/></svg></div>
+                    <div class="contact-text">
+                        <strong>Email</strong>
+                        <span>support@securelensai.io</span>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14" stroke="var(--bg-primary, #0f172a)" stroke-width="2" fill="none"/></svg></div>
+                    <div class="contact-text">
+                        <strong>Response Time</strong>
+                        <span>Within 24 hours</span>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+                    <div class="contact-text">
+                        <strong>Emergency</strong>
+                        <span>+1 (555) SEC-LENS</span>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12" stroke="var(--bg-primary, #0f172a)" stroke-width="1.5"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="var(--bg-primary, #0f172a)" stroke-width="1.5" fill="none"/></svg></div>
+                    <div class="contact-text">
+                        <strong>Documentation</strong>
+                        <span>docs.securelensai.io</span>
+                    </div>
+                </div>
+
+                <div class="faq-section">
+                    <h3>FAQ</h3>
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>How long does a security analysis take?</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            Most analyses complete within 5-15 minutes depending on the complexity and size of your files. Critical security scans may take longer for thorough examination.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Is my data secure with Secure Lens AI?</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            Yes. All data is encrypted in transit and at rest. We use industry-standard security protocols and never share your data with third parties. Read our privacy policy for more details.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Can I export my analysis reports?</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            Absolutely! You can export reports in PDF, CSV, and JSON formats from your account dashboard. Professional and Enterprise plans include automated export scheduling.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="office-hours">
+                    <h3>Office Hours</h3>
+                    <p>Monday - Friday: 9:00 AM - 6:00 PM EST</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api-client.js"></script>
+    <script src="js/navbar.js"></script>
+    <script>
+        // Initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+        });
+
+        // Auth check - contact requires login
+        function checkAuth() {
+            if (!window.SecuLens || !window.SecuLens.api || !window.SecuLens.api.isLoggedIn()) {
+                window.location.href = '/login.html';
+                return;
+            }
+        }
+
+        // Form submission
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('formMessage');
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<div class="loading-spinner"></div>Sending...';
+
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    subject: document.getElementById('subject').value,
+                    priority: document.getElementById('priority').value,
+                    message: document.getElementById('message').value
+                };
+
+                // Use Secure Lens AI API client
+                const response = await SecuLens.api.submitContact(formData);
+
+                if (response && response.message) {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = response.message;
+                    document.getElementById('contactForm').reset();
+                } else {
+                    throw new Error(response.message || 'Failed to send message');
+                }
+            } catch (error) {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Error: ' + (error.message || 'Failed to send message. Please try again.');
+                console.error('Contact form error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Send Message';
+            }
+        });
+
+        // Client-side validation
+        function validateForm() {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value;
+            const priority = document.getElementById('priority').value;
+            const message = document.getElementById('message').value.trim();
+            const messageDiv = document.getElementById('formMessage');
+
+            if (!name) {
+                showError('Please enter your name');
+                return false;
+            }
+
+            if (!email || !isValidEmail(email)) {
+                showError('Please enter a valid email address');
+                return false;
+            }
+
+            if (!subject) {
+                showError('Please select a subject');
+                return false;
+            }
+
+            if (!priority) {
+                showError('Please select a priority level');
+                return false;
+            }
+
+            if (!message || message.length < 10) {
+                showError('Please enter a message (at least 10 characters)');
+                return false;
+            }
+
+            return true;
+        }
+
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function showError(errorMsg) {
+            const messageDiv = document.getElementById('formMessage');
+            messageDiv.className = 'message error';
+            messageDiv.textContent = 'Error: ' + errorMsg;
+        }
+
+        // FAQ Toggle
+        function toggleFAQ(element) {
+            const question = element;
+            const answer = element.nextElementSibling;
+
+            question.classList.toggle('active');
+            answer.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
