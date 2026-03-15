@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: secure-lens-ai
+    runtime: python
+    pythonVersion: 3.10
+
+    # Start command
+    startCommand: cd backend && python run.py
+
+    # Build command (optional, pip might work in production)
+    buildCommand: cd backend && pip install -r requirements.txt || true
+
+    # Environment variables (set these in Render dashboard)
+    envVars:
+      - key: FLASK_ENV
+        scope: build_and_run
+        value: production
+      - key: PORT
+        scope: run
+        value: 5000
+      - key: HOST
+        scope: run
+        value: 0.0.0.0
+
+    # Health check
+    healthCheckPath: /api/health
+
+    # Disk configuration
+    disk:
+      name: sqlite-data
+      mountPath: /var/data
+
+    # Auto-deploy on push
+    autoDeploy: true

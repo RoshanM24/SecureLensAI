@@ -11,10 +11,13 @@ class Config:
     """Base configuration."""
 
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL",
-        f"sqlite:///{os.path.join(os.path.dirname(__file__), 'securelensai.db')}"
-    )
+    # For Render: set DATABASE_URL to "sqlite:////var/data/securelensai.db"
+    # For local development: uses backend/securelensai.db
+    if os.environ.get("DATABASE_URL"):
+        SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    else:
+        db_path = os.path.join(os.path.dirname(__file__), 'securelensai.db')
+        SQLALCHEMY_DATABASE_URI = f"sqlite:///{db_path}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT Authentication
