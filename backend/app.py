@@ -3,7 +3,8 @@ Main Flask application for Secure Lens AI.
 """
 
 import os
-from flask import Flask, request, jsonify
+import mimetypes
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
@@ -323,6 +324,74 @@ def create_app():
             "account_type": "Professional",
             "last_active": datetime.utcnow().isoformat()
         }), 200
+
+    # ── Static file serving (production) ────────────────────────────────
+    # In production (Render), the backend also serves frontend files.
+    # In local development, the separate frontend server (serve.py) is used.
+    FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
+    FRONTEND_DIR = os.path.abspath(FRONTEND_DIR)
+
+    def _serve_file(filepath):
+        """Read a file and return a Response with correct MIME type."""
+        if not os.path.isfile(filepath):
+            return None
+        # Security: ensure file is within frontend directory
+        real_path = os.path.realpath(filepath)
+        if not real_path.startswith(os.path.realpath(FRONTEND_DIR)):
+            return None
+        mime_type, _ = mimetypes.guess_type(filepath)
+        if mime_type is None:
+            mime_type = "application/octet-stream"
+        with open(filepath, "rb") as f:
+            data = f.read()
+        return Response(data, status=200, headers={"Content-Type": mime_type})
+
+    @app.route("/", methods=["GET"])
+    def serve_index():
+        """Serve the landing page."""
+        result = _serve_file(os.path.join(FRONTEND_DIR, "index.html"))
+        if result:
+            return result
+        return jsonify({"status": "ok", "service": "Secure Lens AI"}), 200
+
+    @app.route("/css/<path:filename>", methods=["GET"])
+    def serve_css(filename):
+        """Serve CSS files."""
+        result = _serve_file(os.path.join(FRONTEND_DIR, "css", filename))
+        if result:
+            return result
+        return jsonify({"error": "Not found"}), 404
+
+    @app.route("/js/<path:filename>", methods=["GET"])
+    def serve_js(filename):
+        """Serve JavaScript files."""
+        result = _serve_file(os.path.join(FRONTEND_DIR, "js", filename))
+        if result:
+            return result
+        return jsonify({"error": "Not found"}), 404
+
+    @app.route("/images/<path:filename>", methods=["GET"])
+    def serve_images(filename):
+        """Serve image files."""
+        result = _serve_file(os.path.join(FRONTEND_DIR, "images", filename))
+        if result:
+            return result
+        return jsonify({"error": "Not found"}), 404
+
+    @app.route("/<path:filename>", methods=["GET"])
+    def serve_frontend(filename):
+        """Serve frontend HTML and other static files."""
+        # Try exact file first
+        filepath = os.path.join(FRONTEND_DIR, filename)
+        result = _serve_file(filepath)
+        if result:
+            return result
+        # Try with .html extension (e.g. /login -> login.html)
+        if "." not in filename:
+            result = _serve_file(filepath + ".html")
+            if result:
+                return result
+        return jsonify({"error": "Not found"}), 404
 
     @app.errorhandler(404)
     def not_found(error):

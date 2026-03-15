@@ -314,10 +314,12 @@ class Flask:
             def _replace_param(m):
                 full = m.group(0)  # e.g. <int:analysis_id> or <name>
                 if ":" in full:
-                    # typed parameter, e.g. <int:analysis_id>
+                    # typed parameter, e.g. <int:analysis_id> or <path:filename>
                     ptype, name = full[1:-1].split(":", 1)
                     if ptype == "int":
                         return f"(?P<{name}>\\d+)"
+                    elif ptype == "path":
+                        return f"(?P<{name}>.+)"
                     return f"(?P<{name}>[^/]+)"
                 else:
                     name = full[1:-1]
