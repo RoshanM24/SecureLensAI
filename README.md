@@ -39,7 +39,7 @@ Secure Lens AI is a full-stack web application that analyzes Zscaler web proxy l
 ## Project Structure
 
 ```
-SecuLens/
+SecureLensAI/
 ├── backend/
 │   ├── app.py                  # Flask application & API routes
 │   ├── auth.py                 # Authentication endpoints (register/login)
@@ -87,8 +87,8 @@ SecuLens/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/SecuLens.git
-cd SecuLens
+git clone https://github.com/yourusername/SecureLensAI.git
+cd SecureLensAI
 ```
 
 ### 2. Set Up Python Environment
@@ -139,14 +139,9 @@ python serve.py
 
 The frontend is available at `http://localhost:3000`.
 
-### 7. Login
+### 7. Login & Create Account
 
-Open `http://localhost:3000` in your browser. A demo account is created automatically:
-
-| | |
-|---|---|
-| **Username** | `admin` |
-| **Password** | `admin123` |
+Open `http://localhost:3000` in your browser. You'll be directed to the login page. Click **"Create an account"** to register a new user with your own credentials. Once registered, you can log in and start uploading log files for analysis.
 
 ---
 
@@ -263,12 +258,58 @@ The `backend/vendor/` directory contains lightweight Flask-compatible shim packa
 
 ## Security
 
-- Passwords hashed with PBKDF2-SHA256 (600,000 iterations)
-- JWT tokens expire after 24 hours
-- CORS configured per environment
-- File uploads validated by extension and size
-- Users can only access their own analyses
-- SQL injection protected via parameterized queries
+- **Password Security** — Passwords hashed with PBKDF2-SHA256 (600,000 iterations); users must create strong passwords during registration
+- **JWT Authentication** — Tokens expire after 24 hours; issued upon successful login and required for all protected endpoints
+- **CORS Protection** — Cross-Origin Resource Sharing configured per environment to prevent unauthorized API access
+- **File Upload Validation** — Uploaded files validated by extension and file size (50MB limit); only `.json`, `.csv`, `.log`, `.txt` formats accepted
+- **Access Control** — Users can only view their own uploaded files and analyses; no cross-user data leakage
+- **SQL Injection Prevention** — All database queries use parameterized statements to prevent injection attacks
+- **Log Data Privacy** — Log files uploaded for analysis are stored temporarily and deleted after processing; consider data residency policies if using AI analysis
+- **Credential Security** — API keys and secrets must never be hardcoded; use environment variables only
+- **No Default Credentials** — No admin accounts or default passwords are pre-configured
+
+---
+
+## Production Deployment
+
+### Environment Configuration
+
+Before deploying to production, ensure the following environment variables are securely configured:
+
+```bash
+# Generate strong secret keys
+SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+JWT_SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+
+# Export to your hosting platform (e.g., Vercel, Render, Heroku)
+export SECRET_KEY="your-generated-secret-here"
+export JWT_SECRET_KEY="your-generated-jwt-secret-here"
+export OPENAI_API_KEY="your-api-key-here"
+export CORS_ORIGINS="https://yourdomain.com,https://www.yourdomain.com"
+```
+
+### Security Best Practices
+
+- **Never commit `.env` files** — The `.gitignore` excludes `.env` and all database files
+- **Use HTTPS only** — Ensure your deployment enforces HTTPS for all traffic
+- **Rotate secrets regularly** — Change SECRET_KEY and JWT_SECRET_KEY periodically
+- **Database backups** — Set up automated backups of the SQLite database before production use
+- **Rate limiting** — Consider adding rate limiting to the API endpoints to prevent abuse
+- **Log rotation** — Configure log file rotation to manage disk space
+- **Monitor API usage** — Track OpenAI API calls and costs to avoid unexpected charges
+- **Use environment-specific configs** — Maintain separate .env files for development, staging, and production
+
+### Deploying to Vercel, Render, or Heroku
+
+1. Push your repository to GitHub
+2. Connect your GitHub repo to your deployment platform
+3. Add environment variables in the platform's settings (do **not** commit `.env`)
+4. Configure the start command:
+   ```bash
+   cd backend && python run.py
+   ```
+5. Set Node.js version and Python version as needed
+6. Deploy and monitor logs
 
 ---
 
